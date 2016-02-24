@@ -1,5 +1,5 @@
 # USAGE:
-# ruby to_redcap.rb "test subject 1" phase2day1.csv
+# ruby to_redcap.rb "30" phase1day1.csv
 # ruby to_redcap.rb "test subject 1" phase2day7.csv
 
 #export  file with records by cols
@@ -146,7 +146,7 @@ CSV.open("to_import/import_#{isamples}", "w") do |csv|
 					end
 
 					if values[id-1][:collos] == "freezer_label"
-						# csv << [keys[id-1], sample[:freezer_label]]
+						csv << [keys[id-1], sample[:freezer_label]]
 						p "FreezerL id = #{id-1}"
 						id +=1
 						if values[id-1][:collos] != "treatment"
