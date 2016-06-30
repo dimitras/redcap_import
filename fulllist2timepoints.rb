@@ -25,15 +25,26 @@ end
 full_list.each do |subject, samples|
 	files_list.uniq.each do |f|
 		Dir.mkdir("collos_exports/#{subject}") unless File.exists?("collos_exports/#{subject}")
+		Dir.mkdir("collos_exports/#{subject}/manifests") unless File.exists?("collos_exports/#{subject}/manifests")
 		(fphase, fday) = f.split("_")
 
 		# export a file for each phase
-		CSV.open("collos_exports/#{subject}/#{fphase}.csv", "w") do |csv|
+		CSV.open("collos_exports/#{subject}/manifests/#{fphase}.csv", "w") do |csv|
 			csv << ["sample_collos_id","sample_identifier","id_barcode","id_subject","id_study","sample_type","collection-time-point","treatment","sample_name","species","material_type","quantity","box_label","box_barcode","freezer_label","freezer_type","type"]
 			samples.each do |sample|
 				(phase, day, tp) = sample[:collection_time_point].split(" ")
 				if phase == fphase
-					csv << [sample[:sample_collos_id], sample[:sample_identifier], sample[:id_barcode], sample[:id_subject], sample[:id_study], sample[:sample_type], sample[:collection_time_point], sample[:treatment], sample[:sample_name], sample[:species], sample[:material_type], sample[:quantity], sample[:box_label], sample[:box_barcode], sample[:freezer_label], sample[:freezer_type], sample[:type]]
+					if sample[:treatment] == "celecoxib,naproxen,placebo"
+						treat = "cele,napr,plac"
+					else
+						treat = sample[:treatment]
+					end
+					if sample[:sample_name] && (sample[:sample_name].include? "aliquot")
+						alq = sample[:sample_name].split(" ")[1]
+					else
+						alq = sample[:sample_name]
+					end
+					csv << [sample[:sample_collos_id], sample[:sample_identifier], sample[:id_barcode], sample[:id_subject], sample[:id_study], sample[:sample_type], sample[:collection_time_point], treat, alq, sample[:species], sample[:material_type], sample[:quantity], sample[:box_label], sample[:box_barcode], sample[:freezer_label], sample[:freezer_type], sample[:type]]
 				end
 			end
 		end
